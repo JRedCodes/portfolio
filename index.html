@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jacob Redding — Backend Software Engineer</title>
+<meta name="description" content="Jacob Redding — backend-focused software engineer. Distributed systems, APIs, databases, and the operating-systems fundamentals underneath them." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f8f6fd;
+    --text:#3b1a6e;
+    --muted:rgba(59,26,110,.74);
+    --faint:rgba(59,26,110,.5);
+    --glass:rgba(255,255,255,.62);
+    --glass-strong:rgba(255,255,255,.82);
+    --border:rgba(109,40,217,.13);
+    --border-hi:rgba(109,40,217,.26);
+    --accent:#7c3aed;
+    --purple:#5b21b6;
+    --radius:14px;
+    --max:1080px;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:110px}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:rgba(124,58,237,.2)}
+
+  /* ---------- background ---------- */
+  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:-2;display:block}
+  .vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 35%, transparent 0%, rgba(248,246,253,.25) 60%, rgba(248,246,253,.75) 100%)}
+
+  /* ---------- nav ---------- */
+  .nav-wrap{position:fixed;top:16px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 16px;pointer-events:none}
+  nav{pointer-events:auto;display:flex;gap:4px;padding:8px;border-radius:999px;border:1px solid transparent;
+    transition:background .35s, border-color .35s, backdrop-filter .35s; max-width:100%;overflow-x:auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav.scrolled{background:rgba(255,255,255,.62);box-shadow:0 8px 30px rgba(76,29,149,.08);border-color:var(--border-hi);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  nav a{font-size:15px;font-weight:500;padding:9px 22px;border-radius:999px;color:var(--text);white-space:nowrap;transition:background .2s,color .2s}
+  nav a:hover{background:rgba(109,40,217,0.07)}
+  nav a.active{background:rgba(124,58,237,.12);color:var(--purple)}
+
+  /* ---------- layout ---------- */
+  section{padding:110px 24px}
+  .container{max-width:var(--max);margin:0 auto}
+  h2.section-title{font-size:clamp(34px,5vw,46px);font-weight:500;letter-spacing:-.02em;margin-bottom:36px;color:var(--purple)}
+  .eyebrow{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.04em;margin-bottom:10px;opacity:.85}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease, transform .8s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- hero ---------- */
+  #home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:80px}
+  #home h1{color:var(--purple);font-size:clamp(52px,9vw,92px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+  .typed{margin-top:22px;font-size:clamp(18px,2.4vw,23px);font-weight:400;color:var(--accent);min-height:1.6em}
+  .caret{display:inline-block;width:.55em;height:1.05em;background:var(--accent);vertical-align:-.15em;margin-left:3px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .hero-actions{margin-top:38px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:500;padding:11px 20px;border-radius:10px;border:1px solid var(--border-hi);background:rgba(109,40,217,0.04);backdrop-filter:blur(8px);transition:background .2s,border-color .2s,transform .2s}
+  .btn:hover{background:rgba(109,40,217,0.1);border-color:rgba(109,40,217,0.3);transform:translateY(-1px)}
+  .btn.solid{background:var(--purple);color:#fff;border-color:var(--purple)}
+  .btn.solid:hover{background:#4c1d95}
+  .btn svg{width:17px;height:17px}
+  .scroll-hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);color:var(--faint);font-size:12px;font-family:var(--mono);letter-spacing:.1em;animation:float 2.4s ease-in-out infinite}
+  @keyframes float{50%{transform:translate(-50%,6px)}}
+
+  /* ---------- glass ---------- */
+  .glass{box-shadow:0 10px 40px -18px rgba(76,29,149,.18);background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px;align-items:start}
+  .about-text p{font-size:18px;color:var(--muted);margin-bottom:18px}
+  .about-text p strong{color:var(--text);font-weight:500}
+  .facts{padding:24px}
+  .fact{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14.5px}
+  .fact:last-child{border-bottom:0}
+  .fact span:first-child{color:var(--faint)}
+  .fact span:last-child{text-align:right}
+  .dot-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:7px;box-shadow:0 0 8px rgba(16,185,129,.6);vertical-align:1px}
+
+  /* ---------- experience accordion ---------- */
+  .exp{margin-bottom:16px;overflow:hidden}
+  .exp-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+  .exp-head:hover{background:rgba(109,40,217,0.025)}
+  .exp-role{font-size:17px;font-weight:500}
+  .exp-org{font-size:14.5px;color:var(--faint);margin-top:2px}
+  .exp-org .sep{margin:0 8px;opacity:.6}
+  .exp-meta{display:flex;align-items:center;gap:14px;color:var(--faint);font-size:14.5px;white-space:nowrap}
+  .chev{width:16px;height:16px;transition:transform .3s}
+  .exp.open .chev{transform:rotate(180deg)}
+  .exp-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+  .exp.open .exp-body{grid-template-rows:1fr}
+  .exp-inner{overflow:hidden}
+  .exp-content{padding:4px 22px 22px;border-top:1px solid var(--border)}
+  .exp-content h4{font-size:15.5px;font-weight:600;margin:18px 0 6px;color:rgba(59,26,110,0.9)}
+  .exp-content li{list-style:none;color:var(--muted);font-size:15.5px;padding-left:16px;position:relative;margin:5px 0}
+  .exp-content li::before{content:"•";position:absolute;left:0;color:var(--faint)}
+  .stack-label{margin-top:18px;font-size:14px;color:var(--faint)}
+
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{font-size:12px;padding:4px 11px;border-radius:999px;border:1px solid var(--border-hi);color:rgba(59,26,110,0.72);background:rgba(109,40,217,0.03)}
+
+  /* ---------- projects ---------- */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:-12px 0 30px}
+  .filter{font:inherit;font-size:13.5px;padding:7px 15px;border-radius:999px;border:1px solid var(--border);background:rgba(109,40,217,0.03);color:var(--muted);cursor:pointer;transition:all .2s}
+  .filter:hover{color:var(--text);border-color:var(--border-hi)}
+  .filter.active{background:rgba(124,58,237,.14);color:var(--purple);border-color:var(--border-hi)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+  .grid:hover .card{opacity:.55}
+  .grid .card:hover{opacity:1;transform:translateY(-4px);border-color:var(--border-hi)}
+  .card{min-width:0;padding:30px;display:flex;flex-direction:column;transition:opacity .3s, transform .3s, border-color .3s}
+  .card.hidden{display:none}
+  .card.featured{grid-column:span 2}
+  .card h3{font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 16px}
+  .badge{font-size:11.5px;padding:3px 10px;border-radius:999px;background:rgba(109,40,217,0.07);border:1px solid var(--border-hi);color:rgba(59,26,110,0.8)}
+  .badge.live{border-color:rgba(5,150,105,.3);color:#047857;background:rgba(16,185,129,.09)}
+  .badge.team{border-color:rgba(124,58,237,.35);color:var(--accent);background:rgba(124,58,237,.07)}
+  .card p.desc{color:var(--muted);font-size:16.5px;margin-bottom:14px}
+  .card ul.points{margin:0 0 18px}
+  .card ul.points li{list-style:none;color:var(--muted);font-size:15px;padding-left:16px;position:relative;margin:6px 0}
+  .card ul.points li::before{content:"›";position:absolute;left:2px;color:var(--accent);opacity:.8}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 22px}
+  .stat{padding:14px;border-radius:10px;background:rgba(109,40,217,0.035);border:1px solid var(--border)}
+  .stat b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em}
+  .stat span{font-size:12.5px;color:var(--faint)}
+  .links{display:flex;gap:10px;margin:auto 0 18px;padding-top:6px;flex-wrap:wrap}
+  .links .btn{padding:8px 15px;font-size:14px;border-radius:8px}
+  .links .btn.dark{background:var(--purple);border-color:var(--purple);color:#fff}
+  .links .btn.dark:hover{background:#4c1d95}
+  .note{font-size:13px;color:var(--faint);font-style:italic;margin:auto 0 16px}
+  .arch{font-family:var(--mono);font-size:12px;line-height:1.55;color:#4c1d95;background:rgba(245,240,255,.75);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;margin-bottom:20px;white-space:pre}
+
+  /* ---------- carry-up ---------- */
+  .lead{color:var(--muted);font-size:18px;max-width:760px;margin:-18px 0 34px}
+  .carry{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .carry-item{padding:22px}
+  .carry-from{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+  .carry-arrow{color:var(--accent);margin:8px 0;font-size:14px;opacity:.85}
+  .carry-to{font-size:16.5px;font-weight:600;margin-bottom:8px}
+  .carry-item p{font-size:14.5px;color:var(--muted)}
+
+  /* ---------- stack ---------- */
+  .stack-row{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:26px 0;border-bottom:1px solid var(--border);align-items:start}
+  .stack-row:last-child{border-bottom:0}
+  .stack-row h3{font-size:24px;font-weight:500;color:rgba(59,26,110,0.85);letter-spacing:-.01em}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:11px;font-size:16px;padding:10px 20px 10px 16px;border-radius:999px;border:1px solid var(--border);background:var(--glass);backdrop-filter:blur(8px);color:rgba(59,26,110,0.85);transition:border-color .2s, transform .2s}
+  .chip:hover{border-color:var(--border-hi);transform:translateY(-2px)}
+  .chip img,.chip .gi{width:22px;height:22px;flex-shrink:0;object-fit:contain}
+  .chip img.inv{filter:none}
+
+  /* ---------- contact ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:22px}
+  .contact-links{padding:28px;display:flex;flex-direction:column;gap:12px}
+  .contact-links p{color:var(--muted);margin-bottom:8px}
+  .clink{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(109,40,217,0.03);transition:background .2s,border-color .2s}
+  .clink:hover{background:rgba(109,40,217,0.07);border-color:var(--border-hi)}
+  .clink svg{width:20px;height:20px;flex-shrink:0;opacity:.85}
+  .clink small{display:block;color:var(--faint);font-size:12.5px}
+  form{padding:28px;display:flex;flex-direction:column;gap:14px}
+  input,textarea{font:inherit;font-size:15px;color:var(--text);background:rgba(255,255,255,.75);border:1px solid var(--border);border-radius:8px;padding:12px 15px;outline:none;transition:border-color .2s}
+  input:focus,textarea:focus{border-color:rgba(124,58,237,.5)}
+  input::placeholder,textarea::placeholder{color:var(--faint)}
+  textarea{min-height:150px;resize:vertical}
+  form button{font:inherit;font-size:15px;font-weight:500;padding:12px;border-radius:8px;border:1px solid var(--border-hi);background:var(--purple);color:#fff;cursor:pointer;transition:background .2s}
+  form button:hover{background:#4c1d95}
+
+  /* ---------- footer ---------- */
+  footer{text-align:center;padding:90px 24px 70px}
+  .quote-mark{font-size:44px;line-height:1;color:var(--faint);font-family:Georgia,serif}
+  .quote{font-style:italic;color:var(--muted);font-size:18px;margin-top:6px}
+  .copy{margin-top:40px;font-size:13px;color:var(--faint)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:880px){
+    .about-grid,.contact-grid{grid-template-columns:1fr}
+    .grid{grid-template-columns:minmax(0,1fr)}
+    .card.featured{grid-column:auto}
+    .carry{grid-template-columns:1fr 1fr}
+    .stack-row{grid-template-columns:1fr;gap:14px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:600px){
+    nav{justify-content:flex-start}
+    nav a{padding:8px 14px;font-size:14px}
+    section{padding:80px 18px}
+    .carry{grid-template-columns:1fr}
+    .card{padding:22px}
+    .exp-head{flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+
+<div class="nav-wrap">
+  <nav id="nav">
+    <a href="#home" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#projects">Projects</a>
+    <a href="#stack">Stack</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</div>
+
+<!-- ================= HERO ================= -->
+<section id="home">
+  <h1>Hi, I'm Jacob</h1>
+  <div class="typed" aria-live="polite"><span id="typed"></span><span class="caret"></span></div>
+  <div class="hero-actions">
+    <a class="btn solid" href="#projects">View my work</a>
+    <a class="btn" href="Jacob_Redding_Resume.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      Resume
+    </a>
+    <a class="btn" href="https://github.com/JRedCodes" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+      GitHub
+    </a>
+  </div>
+  <div class="scroll-hint">SCROLL ↓</div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="container">
+    <h2 class="section-title reveal">About Me</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm Jacob, a Computer Science student at <strong>Sacramento State</strong> (Software Engineering concentration, graduating May 2027) focused on <strong>backend engineering</strong>: the services, data models and control loops that keep a product working when nobody's looking.</p>
+        <p>Much of my coursework sits close to the metal: a multithreaded cache in C, memory allocators, CUDA kernels, reliable delivery over UDP, an HTTP broker on raw sockets. I've found those ideas don't go away higher up the stack. They come back as <strong>message queues, health checks, idempotent retries and graceful shutdowns</strong>. I like building at that layer, where systems fundamentals meet real product requirements.</p>
+        <p>Right now I'm building a <strong>distributed canary-rollout platform in Go and TypeScript</strong> and working on <strong>SnowSync</strong> with a six-person team for a real client.</p>
+      </div>
+      <div class="facts glass reveal">
+        <div class="fact"><span>Status</span><span><i class="dot-live"></i>Open to internships &amp; new-grad roles</span></div>
+        <div class="fact"><span>Focus</span><span>Backend · Distributed Systems</span></div>
+        <div class="fact"><span>School</span><span>CSU Sacramento, B.S. CS</span></div>
+        <div class="fact"><span>Graduating</span><span>May 2027</span></div>
+        <div class="fact"><span>Based in</span><span>Sacramento, CA</span></div>
+        <div class="fact"><span>Languages</span><span>Go · TypeScript · Java · C · CUDA</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPERIENCE ================= -->
+<section id="work">
+  <div class="container">
+    <h2 class="section-title reveal">Experience</h2>
+
+    <div class="exp glass open reveal">
+      <button class="exp-head" aria-expanded="true">
+        <div>
+          <div class="exp-role">Software Engineer, Senior Project Team</div>
+          <div class="exp-org">SnowSync<span class="sep">|</span>Sacramento State × Ski &amp; Snow Club</div>
+        </div>
+        <div class="exp-meta">Sep 2026 – Present
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </button>
+      <div class="exp-body"><div class="exp-inner"><div class="exp-content">
+        <h4>Client-Facing Team Engineering</h4>
+        <ul>
+          <li>Building in a 6-person engineering team under a two-semester client agreement between Sacramento State and the Ski &amp; Snow Club, delivering a cross-platform mobile app for members and officers.</li>
+          <li>Regular client and faculty-advisor meetings: turning stakeholder requirements into specs, implementation tasks and modular components, then demoing against deadlines.</li>
+          <li>Coordinating feature work through GitHub, Jira and shared technical specifications, with sprint planning, task breakdowns and recurring project deliverables.</li>
+        </ul>
+        <h4>Architecture &amp; Backend</h4>
+        <ul>
+          <li>Contributed to system architecture and technical planning for trip lifecycle management, real-time location sharing, geofencing and offline-capable data synchronization.</li>
+          <li>The backend is a Node.js + TypeScript modular monolith (Express 5, Prisma on PostgreSQL, Zod validation, JWT auth with Argon2 hashing, structured Pino logging), tested with Vitest and Supertest in a shared-package monorepo.</li>
+          <li>Developing the React Native + TypeScript client that consolidates club communication, trip coordination and admin workflows into a single platform.</li>
+        </ul>
+        <div class="stack-label">Tech Stack:</div>
+        <div class="tags">
+          <span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">PostgreSQL</span><span class="tag">Prisma</span><span class="tag">Zod</span><span class="tag">React Native</span><span class="tag">Docker Compose</span><span class="tag">Vitest</span><span class="tag">Jira</span>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="exp glass reveal">
+      <button class="exp-head" aria-expanded="false">
+        <div>
+          <div class="exp-role">Multi-Purpose Clerk</div>
+          <div class="exp-org">Save Mart<span class="sep">|</span>Galt, CA</div>
+        </div>
+        <div class="exp-meta">Jun 2021 – Present
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </button>
+      <div class="exp-body"><div class="exp-inner"><div class="exp-content">
+        <ul style="margin-top:14px">
+          <li>Five-plus years of high-volume customer service while keeping accuracy and professionalism in a fast-paced environment, alongside a full CS course load.</li>
+          <li>Rotated across departments (meat, produce, dairy, frozen), adapting quickly to changing workflows and priorities.</li>
+          <li>Operated POS systems and handled cash transactions with consistent accuracy.</li>
+        </ul>
+      </div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROJECTS ================= -->
+<section id="projects">
+  <div class="container">
+    <h2 class="section-title reveal">Projects</h2>
+    <div class="filters reveal" role="tablist">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="backend">Backend &amp; Distributed</button>
+      <button class="filter" data-filter="systems">Systems &amp; Networking</button>
+      <button class="filter" data-filter="gpu">GPU &amp; Parallel</button>
+      <button class="filter" data-filter="oop">Software Design</button>
+    </div>
+
+    <div class="grid" id="project-grid">
+
+      <!-- AI Model Rollout Platform -->
+      <article class="card glass featured reveal" data-cat="backend">
+        <div class="eyebrow">FEATURED · SOLO PROJECT · JUL 2026 – PRESENT</div>
+        <h3>AI Model Rollout Platform</h3>
+        <div class="badges"><span class="badge live">In active development</span><span class="badge">Distributed Systems</span></div>
+        <p class="desc">A 5-service distributed platform that safely ships new AI model versions through progressive canary rollouts. Traffic climbs a <span style="font-family:var(--mono);font-size:14px;color:var(--accent)">10% → 25% → 50% → 75% → 100%</span> ladder while two independent safety loops watch live error rates and latency, and can advance, hold, resume or roll back on their own.</p>
+        <div class="stats">
+          <div class="stat"><b>5 s / 2 m</b><span>dual safety loops</span></div>
+          <div class="stat"><b>30k+</b><span>requests load-tested</span></div>
+          <div class="stat"><b>&lt; 5 s</b><span>auto-rollback on breach</span></div>
+          <div class="stat"><b>140+</b><span>automated tests</span></div>
+        </div>
+<div class="arch">Stress Tester ──POST /v1/infer──► Edge Evaluator (TS) ──xAdd──► Redis Streams ──XReadGroup──► Rollout Controller (Go)
+                                       │                                                       ├─ guard loop (5s)
+                                       └── routes stable / candidate model                     ├─ controller loop (2m)
+Dashboard (React) ◄──── SSE /api/events ───────────────────────────────────────────────────────┤─ batch logger → PostgreSQL
+                                                                                               └─ heartbeat resync (60s)</div>
+        <ul class="points">
+          <li>15-package Go control plane running concurrent per-tenant goroutines; Redis-backed resilience self-heals through a 60-second heartbeat resync during simulated outages.</li>
+          <li>Custom CLI load tester sustained 30,000+ requests at 50 req/s to walk the full rollout ladder, and 200 req/s bursts to confirm automatic rollback within 5 seconds of a threshold breach.</li>
+          <li>7-table PostgreSQL schema over 10 incremental migrations for multi-tenant isolation. "One active rollout per tenant" is enforced as a database constraint, not just in application code.</li>
+          <li>140+ tests (90 TypeScript, 50+ Go) across unit, integration and race-condition checks, gated by a 5-stage CI pipeline with full-stack Playwright E2E.</li>
+        </ul>
+        <div class="links">
+          <a class="btn dark" href="https://github.com/JRedCodes/ai-model-rollout-platform" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>GitHub</a>
+        </div>
+        <div class="tags"><span class="tag">Go</span><span class="tag">TypeScript</span><span class="tag">PostgreSQL</span><span class="tag">Redis Streams</span><span class="tag">Docker Compose</span><span class="tag">SSE</span><span class="tag">React</span><span class="tag">Playwright</span><span class="tag">GitHub Actions</span></div>
+      </article>
+
+      <!-- SnowSync -->
+      <article class="card glass reveal" data-cat="backend">
+        <div class="eyebrow">TEAM OF 6 · CLIENT PROJECT</div>
+        <h3>SnowSync</h3>
+        <div class="badges"><span class="badge live">In progress</span><span class="badge team">Client: Ski &amp; Snow Club</span></div>
+        <p class="desc">A cross-platform app that pulls the Sacramento State Ski &amp; Snow Club's scattered communication, trip coordination and admin work into one place, with location-based features for life on the mountain.</p>
+        <ul class="points">
+          <li>Trip lifecycle management, real-time location sharing and geofencing</li>
+          <li>Offline-capable data sync for spotty mountain connectivity</li>
+          <li>Modular-monolith API: Express 5, Prisma, Postgres, Zod, JWT</li>
+        </ul>
+        <div class="links">
+          <a class="btn dark" href="https://github.com/eshaw8704/SnowSync" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>GitHub</a>
+        </div>
+        <div class="tags"><span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span><span class="tag">Prisma</span><span class="tag">React Native</span></div>
+      </article>
+
+      <!-- InsightfulOps -->
+      <article class="card glass reveal" data-cat="backend">
+        <div class="eyebrow">PERSONAL PROJECT</div>
+        <h3>InsightfulOps</h3>
+        <div class="badges"><span class="badge">Multi-tenant</span><span class="badge">RAG</span></div>
+        <p class="desc">An AI operations assistant for small and mid-sized businesses. It's assistant-first and role-aware, and tenant isolation is enforced at the database layer, not just in the UI.</p>
+        <ul class="points">
+          <li>PostgreSQL Row-Level Security policies, with a written verification checklist and results</li>
+          <li>Background ingestion worker builds per-tenant embeddings for retrieval</li>
+          <li>Strict RAG with required citations to limit hallucinations</li>
+        </ul>
+        <div class="links">
+          <a class="btn dark" href="https://github.com/JRedCodes/InsightfulOps" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>GitHub</a>
+        </div>
+        <div class="tags"><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">TypeScript</span><span class="tag">Supabase</span><span class="tag">Postgres RLS</span><span class="tag">React</span></div>
+      </article>
+
+      <!-- P3 concurrent cache -->
+      <article class="card glass featured reveal" data-cat="systems">
+        <div class="eyebrow">CSC 139 · OPERATING SYSTEMS · C + PTHREADS</div>
+        <h3>Concurrent Fetch-on-Miss Cache</h3>
+        <div class="badges"><span class="badge">Concurrency</span><span class="badge">Caching</span><span class="badge">Operating Systems</span></div>
+        <p class="desc">A multithreaded, read-through cache in C sitting in front of a slow backing store. Many client threads hit it at once, and it has to stay correct through cache stampedes, failed fetches, a throttled backend and mid-flight shutdown. It's the same problem a CDN edge or a Redis-fronted API solves, built from mutexes and condition variables.</p>
+        <div class="stats">
+          <div class="stat"><b>1 fetch</b><span>per key, however many waiters</span></div>
+          <div class="stat"><b>≤ N</b><span>concurrent backing fetches</span></div>
+          <div class="stat"><b>CLOCK</b><span>&amp; FIFO eviction</span></div>
+          <div class="stat"><b>8</b><span>trace scenarios incl. stampede</span></div>
+        </div>
+        <ul class="points">
+          <li><b style="font-weight:500;color:var(--text)">Single-flight request coalescing:</b> the first miss creates an in-flight record; later requests for the same key wait on its condition variable instead of hitting the backend again.</li>
+          <li>In-flight records are reference-counted across <code>pthread_cond_wait</code>, so waiters stay safe even when the fetch fails or the cache shuts down underneath them.</li>
+          <li>Backpressure: at most N concurrent backing fetches, with excess misses parked on a throttle condition variable. Throttle violations are tracked and tested.</li>
+          <li>Graceful shutdown broadcasts to every waiter and aborts outstanding requests cleanly instead of deadlocking.</li>
+          <li>Built on my variable-size memory pool (below), with a hash index for O(1) lookups and evict-on-fetch when the pool is full.</li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">C</span><span class="tag">pthreads</span><span class="tag">Mutexes</span><span class="tag">Condition Variables</span><span class="tag">make</span><span class="tag">Python test harness</span></div>
+      </article>
+
+      <!-- P2 pool allocator -->
+      <article class="card glass reveal" data-cat="systems">
+        <div class="eyebrow">CSC 139 · OPERATING SYSTEMS · C</div>
+        <h3>Variable-Size Cache Manager</h3>
+        <div class="badges"><span class="badge">Memory Management</span><span class="badge">Caching</span></div>
+        <p class="desc">A key-value cache that manages its own memory: one contiguous pool, carved up by a hand-written allocator, with eviction when space runs out.</p>
+        <ul class="points">
+          <li>First-fit and best-fit placement with block splitting and alignment-aware headers</li>
+          <li>Forward and backward coalescing on free to fight fragmentation</li>
+          <li>FIFO and CLOCK (second-chance) eviction over a hashed index</li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">C</span><span class="tag">Allocators</span><span class="tag">Hash Tables</span><span class="tag">CLOCK</span></div>
+      </article>
+
+      <!-- CUDA -->
+      <article class="card glass reveal" data-cat="gpu">
+        <div class="eyebrow">CSC 163 · GPU PROGRAMMING · CUDA C</div>
+        <h3>CUDA Parallel Patterns</h3>
+        <div class="badges"><span class="badge">GPU</span><span class="badge">Data Parallelism</span></div>
+        <p class="desc">A series of CUDA kernels covering the core data-parallel patterns, each built around the GPU memory hierarchy rather than brute-force threads.</p>
+        <ul class="points">
+          <li><b style="font-weight:500;color:var(--text)">Tiled matrix multiply:</b> 16×16 shared-memory tiles to cut global-memory traffic</li>
+          <li><b style="font-weight:500;color:var(--text)">2D RGB convolution:</b> 20×20 input tiles with halo cells and a <code>__restrict__</code> mask</li>
+          <li><b style="font-weight:500;color:var(--text)">Work-efficient scan:</b> Brent-Kung up/down sweep, plus a second kernel to stitch block sums for arbitrary lengths</li>
+          <li><b style="font-weight:500;color:var(--text)">Histogram:</b> 4,096 privatized shared-memory bins with atomics, merged and saturated globally</li>
+        </ul>
+        <div class="note">Course work; code available on request.</div>
+        <div class="tags"><span class="tag">CUDA</span><span class="tag">C/C++</span><span class="tag">Shared Memory</span><span class="tag">Atomics</span><span class="tag">CMake</span></div>
+      </article>
+
+      <!-- Pub-Sub broker -->
+      <article class="card glass reveal" data-cat="systems">
+        <div class="eyebrow">COMPUTER NETWORKS · JAVA</div>
+        <h3>HTTP Pub-Sub Message Broker</h3>
+        <div class="badges"><span class="badge">Networking</span><span class="badge">Messaging</span></div>
+        <p class="desc">A topic-based publish/subscribe broker that speaks HTTP/1.1 directly over raw sockets: request parsing, routing and responses with no framework.</p>
+        <ul class="points">
+          <li>REST-style endpoints: <code>/subscribe</code>, <code>/unsubscribe</code>, <code>/publish</code>, <code>/messages</code>, <code>/status</code></li>
+          <li>Per-client mailboxes on <code>ConcurrentHashMap</code> + <code>ConcurrentLinkedQueue</code> for thread-safe fan-out</li>
+          <li>Header-based client identity and proper 400/404/405 handling</li>
+          <li>Companion test client simulates many publishers and subscribers across topics, then verifies delivery</li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">Java</span><span class="tag">HTTP/1.1</span><span class="tag">Sockets</span><span class="tag">java.util.concurrent</span></div>
+      </article>
+
+      <!-- Reliable UDP -->
+      <article class="card glass reveal" data-cat="systems">
+        <div class="eyebrow">CSC 138 · COMPUTER NETWORKS · JAVA</div>
+        <h3>Reliable File Transfer over UDP</h3>
+        <div class="badges"><span class="badge">Networking</span><span class="badge">Concurrency</span></div>
+        <p class="desc">A sender/receiver pair that adds reliability on top of UDP: files are chunked, sequence-numbered and acknowledged, then reassembled and checked with MD5 on the other side.</p>
+        <ul class="points">
+          <li>Stop-and-wait ACKs with timeouts and retransmission; stale and duplicate ACKs discarded</li>
+          <li>Built-in packet-loss and reordering simulation to prove correctness under bad networks</li>
+          <li>Concurrent transfers keyed by ID with synchronized state, idle-transfer cleanup and re-ACKs for late packets</li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">Java</span><span class="tag">DatagramSocket</span><span class="tag">Executors</span><span class="tag">MD5</span></div>
+      </article>
+
+      <!-- Job server -->
+      <article class="card glass reveal" data-cat="systems">
+        <div class="eyebrow">COMPUTER NETWORKS · JAVA</div>
+        <h3>Concurrent TCP Job Server</h3>
+        <div class="badges"><span class="badge">Networking</span><span class="badge">Load Testing</span></div>
+        <p class="desc">A socket-based job server with two clients: an interactive manual client, and a performance client that opens many concurrent connections, each submitting a batch of jobs, to measure throughput under load.</p>
+        <ul class="points">
+          <li>Configurable load: <span style="font-family:var(--mono);font-size:13px">&lt;clients&gt; &lt;jobsPerClient&gt; &lt;ms&gt;</span></li>
+          <li>Same instinct I later used for the rollout platform's CLI stress tester</li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">Java</span><span class="tag">TCP Sockets</span><span class="tag">Threads</span></div>
+      </article>
+
+      <!-- Unix systems programming -->
+      <article class="card glass reveal" data-cat="systems">
+        <div class="eyebrow">CSC 60 · SYSTEMS PROGRAMMING · C</div>
+        <h3>Unix Processes, IPC &amp; Signals</h3>
+        <div class="badges"><span class="badge">Operating Systems</span><span class="badge">C</span></div>
+        <p class="desc">A series of C programs on the Unix process model: how processes are born, talk to each other and get told to stop.</p>
+        <ul class="points">
+          <li><code>fork</code>/<code>exec</code>/<code>wait</code> process supervisor that launches and reaps child programs</li>
+          <li>Parent-child IPC over anonymous pipes and named FIFOs, passing exit status back</li>
+          <li>Signal handling, environment variables and linked-list reports in a multi-library build (static <code>.a</code> libs, recursive makefiles)</li>
+        </ul>
+        <div class="note">Course work; code available on request.</div>
+        <div class="tags"><span class="tag">C</span><span class="tag">POSIX</span><span class="tag">gcc</span><span class="tag">make</span></div>
+      </article>
+
+      <!-- SacRun -->
+      <article class="card glass reveal" data-cat="oop">
+        <div class="eyebrow">CSC 133 · OBJECT-ORIENTED DESIGN · JAVA</div>
+        <h3>SacRun</h3>
+        <div class="badges"><span class="badge">Design Patterns</span><span class="badge">GUI</span></div>
+        <p class="desc">A campus-themed game built across four iterations: get a student player to class on time through a map full of other students, facilities and distractions. The point was architecture, not graphics.</p>
+        <ul class="points">
+          <li>MVC with multiple views (map, status, messages) observing a single game model</li>
+          <li>Strategy pattern for swappable movement AI; Command pattern for every user action</li>
+          <li>Custom collection plus Iterator; deep class hierarchy (12+ student types) with interfaces like <code>IMoveable</code></li>
+        </ul>
+        <div class="note">Course project; code available on request.</div>
+        <div class="tags"><span class="tag">Java</span><span class="tag">Codename One</span><span class="tag">MVC</span><span class="tag">UML</span></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARRY-UP ================= -->
+<section id="fundamentals">
+  <div class="container">
+    <h2 class="section-title reveal">From the Kernel Up</h2>
+    <p class="lead reveal">The low-level coursework isn't a detour from backend engineering. It's the same set of problems, a few layers down. Here's where each idea shows up again.</p>
+    <div class="carry">
+      <div class="carry-item glass reveal">
+        <div class="carry-from">pipes · FIFOs</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Message queues &amp; streams</div>
+        <p>A pipe is a bounded byte stream between a producer and a consumer. Redis Streams with consumer groups is the same idea, durable and networked, and it carries telemetry in my rollout platform.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">fork · exec · wait</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Supervision &amp; orchestration</div>
+        <p>Launching a child, watching it and reaping its exit status is what container runtimes and orchestrators do at scale. It's also how a controller decides whether a deployment is healthy.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">signals</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Graceful shutdown</div>
+        <p>Catching SIGINT/SIGTERM and cleaning up comes back as draining connections, flushing batch writers and finishing in-flight work before a service exits.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">ACKs · timeouts · retransmit</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">At-least-once delivery</div>
+        <p>Reliable UDP taught me that retries create duplicates. That's why idempotency keys, consumer acknowledgements and dedup logic matter in distributed APIs.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">synchronized · races</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Concurrent services</div>
+        <p>Guarding shared transfer state in Java led straight to per-tenant goroutines in Go, and to writing explicit race-condition tests instead of hoping.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">in-flight records · cond vars</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Request coalescing</div>
+        <p>My OS cache lets one thread fetch a missing key while the rest wait on it. That's Go's <code>singleflight</code>, CDN request collapsing and cache-stampede protection in front of a database.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">fetch throttle · waiting threads</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Backpressure &amp; rate limits</div>
+        <p>Capping concurrent backing fetches and parking the rest is connection-pool limits, bulkheads and rate limiting: protecting a slow dependency from your own traffic.</p>
+      </div>
+      <div class="carry-item glass reveal">
+        <div class="carry-from">allocators · CLOCK eviction</div>
+        <div class="carry-arrow">↓</div>
+        <div class="carry-to">Caching layers</div>
+        <p>Writing first/best-fit, coalescing and second-chance eviction by hand explains Redis eviction policies, memory fragmentation and why cache sizing is a design decision.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STACK ================= -->
+<section id="stack">
+  <div class="container">
+    <h2 class="section-title reveal">Tech Stack</h2>
+    <div class="stack-row reveal">
+      <h3>Languages</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/go.svg" alt="" loading="lazy" />Go</span>
+        <span class="chip"><img src="icons/typescript.svg" alt="" loading="lazy" />TypeScript</span>
+        <span class="chip"><img src="icons/javascript.svg" alt="" loading="lazy" />JavaScript</span>
+        <span class="chip"><img src="icons/java.svg" alt="" loading="lazy" />Java</span>
+        <span class="chip"><img src="icons/c.svg" alt="" loading="lazy" />C</span>
+        <span class="chip"><img src="icons/cplusplus.svg" alt="" loading="lazy" />C++</span>
+        <span class="chip"><img src="icons/azuresqldatabase.svg" alt="" loading="lazy" />SQL</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#76b900" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg>CUDA</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Backend</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/nodejs.svg" alt="" loading="lazy" />Node.js</span>
+        <span class="chip"><img src="icons/express.svg" alt="" class="inv" loading="lazy" />Express</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#9fd8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6 2 12l6 6M16 6l6 6-6 6"/></svg>REST APIs</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#9fd8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l3-7 4 14 3-7h7"/></svg>Server-Sent Events</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#6e8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>Zod</span>
+        <span class="chip"><img src="icons/prisma.svg" alt="" class="inv" loading="lazy" />Prisma</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Data &amp; Infra</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/postgresql.svg" alt="" loading="lazy" />PostgreSQL</span>
+        <span class="chip"><img src="icons/redis.svg" alt="" loading="lazy" />Redis</span>
+        <span class="chip"><img src="icons/supabase.svg" alt="" loading="lazy" />Supabase</span>
+        <span class="chip"><img src="icons/mysql.svg" alt="" loading="lazy" />MySQL</span>
+        <span class="chip"><img src="icons/docker.svg" alt="" loading="lazy" />Docker</span>
+        <span class="chip"><img src="icons/docker.svg" alt="" loading="lazy" />Docker Compose</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Systems</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/linux.svg" alt="" loading="lazy" />POSIX / pthreads</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#c9d4df" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5"/></svg>TCP/UDP Sockets</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#c9d4df" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>HTTP/1.1</span>
+        <span class="chip"><img src="icons/bash.svg" alt="" class="inv" loading="lazy" />Bash</span>
+        <span class="chip"><img src="icons/cmake.svg" alt="" loading="lazy" />CMake / make</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Testing &amp; CI</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/vitest.svg" alt="" loading="lazy" />Vitest</span>
+        <span class="chip"><img src="icons/playwright.svg" alt="" loading="lazy" />Playwright</span>
+        <span class="chip"><svg class="gi" viewBox="0 0 24 24" fill="none" stroke="#6ee7a8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m8 12 3 3 5-6"/></svg>Integration Testing</span>
+        <span class="chip"><img src="icons/githubactions.svg" alt="" loading="lazy" />GitHub Actions</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Frontend</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/react.svg" alt="" loading="lazy" />React</span>
+        <span class="chip"><img src="icons/react.svg" alt="" loading="lazy" />React Native</span>
+        <span class="chip"><img src="icons/angular.svg" alt="" loading="lazy" />Angular</span>
+      </div>
+    </div>
+    <div class="stack-row reveal">
+      <h3>Tools</h3>
+      <div class="chips">
+        <span class="chip"><img src="icons/git.svg" alt="" loading="lazy" />Git</span>
+        <span class="chip"><img src="icons/github.svg" alt="" class="inv" loading="lazy" />GitHub</span>
+        <span class="chip"><img src="icons/jira.svg" alt="" loading="lazy" />Jira</span>
+        <span class="chip"><img src="icons/postman.svg" alt="" loading="lazy" />Postman</span>
+        <span class="chip"><img src="icons/vscode.svg" alt="" loading="lazy" />VS Code</span>
+        <span class="chip"><img src="icons/intellij.svg" alt="" loading="lazy" />IntelliJ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="container">
+    <h2 class="section-title reveal">Get in Touch</h2>
+    <div class="contact-grid">
+      <div class="contact-links glass reveal">
+        <p>Looking for a backend-minded engineer for an internship or new-grad role? I'd love to talk.</p>
+        <a class="clink" href="mailto:Jakeredding17187@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+          <div>Email<small>Jakeredding17187@gmail.com</small></div>
+        </a>
+        <a class="clink" href="https://www.linkedin.com/in/jacob-redding-1036021ba/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          <div>LinkedIn<small>in/jacob-redding</small></div>
+        </a>
+        <a class="clink" href="https://github.com/JRedCodes" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          <div>GitHub<small>github.com/JRedCodes</small></div>
+        </a>
+        <a class="clink" href="Jacob_Redding_Resume.pdf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <div>Resume<small>PDF</small></div>
+        </a>
+      </div>
+      <form class="glass reveal" id="contact-form">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <textarea name="message" placeholder="Your message..." required></textarea>
+        <button type="submit">Send message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="quote-mark">&ldquo;</div>
+  <p class="quote">"Every abstraction is built on a kernel someone understood."</p>
+  <p class="copy">© <span id="yr"></span> Jacob Redding · Built with plain HTML, CSS &amp; a canvas</p>
+</footer>
+
+<script>
+/* ---------- low-poly background with subtle ripples ---------- */
+(() => {
+  const c = document.getElementById('bg'), ctx = c.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, cols, rows, pts = [], cell, t = 0, last = performance.now();
+  const mouse = {x: .5, y: .3, tx: .5, ty: .3};
+  const ripples = [];               // {x, y, born, amp}
+  const SPEED = 140;                // px per second the wavefront travels
+  const WAVELEN = 170;              // px between crests
+  const LIFE = 7;                   // seconds a ripple lives
+
+  function build() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cell = Math.max(70, Math.min(110, W / 14));
+    cols = Math.ceil(W / cell) + 2; rows = Math.ceil(H / cell) + 2;
+    pts = [];
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      pts.push({
+        bx: (i - 1) * cell + (Math.random() - .5) * cell * .8,
+        by: (j - 1) * cell + (Math.random() - .5) * cell * .8,
+        z: Math.random(), ph: Math.random() * Math.PI * 2, h: 0
+      });
+    }
+  }
+  const P = (i, j) => pts[j * cols + i];
+
+  function addRipple(x, y, amp) {
+    ripples.push({x, y, born: t, amp});
+    if (ripples.length > 7) ripples.shift();
+  }
+
+  function heightAt(x, y) {
+    let h = 0;
+    for (const r of ripples) {
+      const age = t - r.born;
+      const d = Math.hypot(x - r.x, y - r.y);
+      const front = age * SPEED;
+      if (d > front) continue;                       // wave hasn't arrived yet
+      const behind = front - d;
+      const env = Math.exp(-behind / 420) * Math.exp(-age / (LIFE * .45)) * Math.min(1, behind / 60);
+      h += r.amp * env * Math.sin((d - front) / WAVELEN * Math.PI * 2);
+    }
+    return h;
+  }
+
+  function draw() {
+    ctx.fillStyle = '#f8f6fd'; ctx.fillRect(0, 0, W, H);
+    const lx = mouse.x * W, ly = mouse.y * H;
+    for (let j = 0; j < rows - 1; j++) for (let i = 0; i < cols - 1; i++) {
+      const a = P(i, j), b = P(i + 1, j), d = P(i, j + 1), e = P(i + 1, j + 1);
+      const tris = ((i + j) % 2) ? [[a, b, e], [a, e, d]] : [[a, b, d], [b, e, d]];
+      for (const tr of tris) {
+        const cx = (tr[0].x + tr[1].x + tr[2].x) / 3, cy = (tr[0].y + tr[1].y + tr[2].y) / 3;
+        const z = (tr[0].z + tr[1].z + tr[2].z) / 3;
+        const nx = tr[1].z - tr[0].z, ny = tr[2].z - tr[0].z;
+        const facet = .5 + .5 * Math.sin(nx * 3.1 + ny * 2.3 + z * 4 + t * .35);
+        // ripple shading: slope of the rippled surface across the triangle
+        const slope = (tr[1].h - tr[0].h) * .8 + (tr[2].h - tr[0].h) * .6;
+        const hAvg = (tr[0].h + tr[1].h + tr[2].h) / 3;
+        const dist = Math.hypot(cx - lx, cy - ly) / Math.max(W, H);
+        const light = Math.max(0, 1 - dist * 1.8);
+        // v: 0 = lavender, 1 = white
+        let v = .42 + facet * .4 + light * .18 + slope * .9 + hAvg * .35;
+        v = Math.max(0, Math.min(1, v));
+        const r = 222 + 33 * v | 0, g = 212 + 43 * v | 0, bl = 247 + 8 * v | 0;
+        ctx.fillStyle = `rgb(${r},${g},${bl})`;
+        ctx.beginPath(); ctx.moveTo(tr[0].x, tr[0].y); ctx.lineTo(tr[1].x, tr[1].y); ctx.lineTo(tr[2].x, tr[2].y); ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = `rgba(124,58,237,${.035 + light * .03})`; ctx.lineWidth = .6; ctx.stroke();
+      }
+    }
+  }
+
+  let nextAmbient = 0;
+  function step(now) {
+    const dt = Math.min(.05, ((now || performance.now()) - last) / 1000); last = now || performance.now();
+    t += dt;
+    mouse.x += (mouse.tx - mouse.x) * .06; mouse.y += (mouse.ty - mouse.y) * .06;
+    // an ambient ripple every few seconds from a random spot
+    if (t > nextAmbient) { addRipple(Math.random() * W, Math.random() * H, .28); nextAmbient = t + 3.5 + Math.random() * 2.5; }
+    while (ripples.length && t - ripples[0].born > LIFE) ripples.shift();
+    for (const p of pts) {
+      p.h = heightAt(p.bx, p.by);
+      p.x = p.bx + Math.sin(t * .55 + p.ph) * 4;
+      p.y = p.by + Math.cos(t * .45 + p.ph) * 4 - p.h * 6;   // crest lifts the vertex slightly
+    }
+    draw();
+    if (!reduce) requestAnimationFrame(step);
+  }
+
+  addEventListener('resize', () => { build(); if (reduce) step(); });
+  let lastMoveRipple = 0;
+  addEventListener('pointermove', e => {
+    mouse.tx = e.clientX / W; mouse.ty = e.clientY / H;
+    if (t - lastMoveRipple > 1.2) { addRipple(e.clientX, e.clientY, .16); lastMoveRipple = t; }
+  });
+  addEventListener('pointerdown', e => addRipple(e.clientX, e.clientY, .45));
+  build();
+  if (reduce) step(); else { addRipple(W / 2, H * .4, .35); requestAnimationFrame(step); }
+})();
+
+/* ---------- typewriter ---------- */
+(() => {
+  const words = ['Backend Software Engineer.', 'Distributed Systems.', 'APIs & Databases.', 'Systems Thinker.'];
+  const el = document.getElementById('typed');
+  let w = 0, i = 0, del = false;
+  (function tick() {
+    const s = words[w];
+    el.textContent = s.slice(0, i);
+    if (!del && i < s.length) i++;
+    else if (!del) { del = true; return setTimeout(tick, 1600); }
+    else if (i > 0) i--;
+    else { del = false; w = (w + 1) % words.length; }
+    setTimeout(tick, del ? 35 : 70);
+  })();
+})();
+
+/* ---------- nav: glass on scroll + active section ---------- */
+const nav = document.getElementById('nav');
+const links = [...nav.querySelectorAll('a')];
+const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+function onScroll() {
+  nav.classList.toggle('scrolled', scrollY > 40);
+  let cur = sections[0];
+  for (const s of sections) if (s.getBoundingClientRect().top < innerHeight * .35) cur = s;
+  links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id));
+}
+addEventListener('scroll', onScroll, {passive: true}); onScroll();
+
+/* ---------- reveal ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold: .12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- accordion ---------- */
+document.querySelectorAll('.exp-head').forEach(btn => btn.addEventListener('click', () => {
+  const exp = btn.closest('.exp'); const open = exp.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}));
+
+/* ---------- project filters ---------- */
+document.querySelectorAll('.filter').forEach(f => f.addEventListener('click', () => {
+  document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+  f.classList.add('active');
+  const cat = f.dataset.filter;
+  document.querySelectorAll('#project-grid .card').forEach(card => {
+    card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+    card.classList.add('in');
+  });
+}));
+
+/* ---------- contact form → mailto (no backend needed) ---------- */
+document.getElementById('contact-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const d = new FormData(e.target);
+  const subject = encodeURIComponent(`Portfolio inquiry from ${d.get('name')}`);
+  const body = encodeURIComponent(`${d.get('message')}\n\n— ${d.get('name')} (${d.get('email')})`);
+  location.href = `mailto:Jakeredding17187@gmail.com?subject=${subject}&body=${body}`;
+});
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
